@@ -1,0 +1,27 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+UserSettings/
+
+# Rider / VS / VSCode stuff
+.vs/
+.idea/
+*.sln
+*.csproj
+*.unityproj
+*.user
+*.tmp
+*.pidb
+*.booproj
+
+# Crash / debug
+sysinfo.txt
+
+# OS
+.DS_Store
+Thumbs.db
