@@ -19,11 +19,21 @@ public class PlayerController : MonoBehaviour
     private Vector3 initialScale;
 
 
+        // PlayerController.cs'e ekle:
+
+    private Animator animator;
+
     private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+
+
+   /* private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         initialScale = transform.localScale;
-    }
+    } */
 
      private void Start()
     {
@@ -37,7 +47,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-
+        animator.SetBool("isWalking", Mathf.Abs(inputX) > 0.1f);
+        animator.SetBool("isJumping", !isGrounded);
         inputX = Input.GetAxisRaw("Horizontal");
 
 

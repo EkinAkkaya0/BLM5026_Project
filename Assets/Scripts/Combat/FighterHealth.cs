@@ -24,7 +24,7 @@ public class FighterHealth : MonoBehaviour
         currentHealth -= amount;
         currentHealth = Mathf.Max(currentHealth, 0);
 
-        Debug.Log($"{gameObject.name} took damage: {amount} | {oldHealth} → {currentHealth}");
+        Debug.Log($"{gameObject.name} took damage: {amount} | {oldHealth} -> {currentHealth}");
 
         if (sr != null)
         {
@@ -49,8 +49,27 @@ public class FighterHealth : MonoBehaviour
 
     private void Die()
     {
-        // Şimdilik sadece devre dışı bırak
         Debug.Log(gameObject.name + " died");
-        // İleride: KO animasyonu, reset round, vs.
+        
+        // MatchManager varsa maci bitir
+        if (MatchManager.Instance != null)
+        {
+            // Player mi Enemy mi oldu?
+            if (gameObject.CompareTag("Player"))
+            {
+                MatchManager.Instance.ForceEndMatch(MatchManager.MatchResult.EnemyWin);
+            }
+            else if (gameObject.CompareTag("Enemy"))
+            {
+                MatchManager.Instance.ForceEndMatch(MatchManager.MatchResult.PlayerWin);
+            }
+        }
+    }
+
+    // Cani resetle (mac basinda kullan)
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+        Debug.Log($"{gameObject.name} health reset to {maxHealth}");
     }
 }

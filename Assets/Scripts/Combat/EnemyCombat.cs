@@ -7,7 +7,7 @@ public class EnemyCombat : MonoBehaviour
     public LayerMask playerLayers;
 
     [Header("Attack Settings")]
-    public float attackRange = 0.7f;
+    public float attackRange = 1.3f;
     public int lightAttackDamage = 8;
     public int heavyAttackDamage = 16;
     public float lightAttackCooldown = 0.5f;
@@ -57,8 +57,8 @@ public class EnemyCombat : MonoBehaviour
     {
         if (sr == null) return;
 
-        // Block'tayken cyan, değilken beyaz
-        sr.color = isBlocking ? Color.cyan : Color.white;
+        // Block'tayken cyan, değilken kırmızı
+        sr.color = isBlocking ? Color.magenta : Color.red;
     }
 
     public void ReceiveDamage(int amount)

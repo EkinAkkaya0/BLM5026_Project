@@ -7,9 +7,9 @@ public class EnemyController : MonoBehaviour
     public float moveSpeed = 6f;
 
     [Header("Desired Distance To Player")]
-    public float minDistance = 1.5f;      // Çok yaklaşma sınırı
+    public float minDistance = 1.0f;      // Çok yaklaşma sınırı
     public float maxDistance = 3.0f;      // Çok uzaklaşma sınırı
-    public float desiredDistance = 2.2f;  // Tercih edilen ideal mesafe
+    public float desiredDistance = 1.0f;  // Tercih edilen ideal mesafe
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -29,9 +29,9 @@ public class EnemyController : MonoBehaviour
     [Header("Block & Jump")]
     public float blockCloseDistance = 1.5f;
     public float blockDuration = 0.6f;
-    public float blockCooldown = 1.5f;
+    public float blockCooldown = 10f;
     public float jumpForce = 10f;
-    public float jumpCooldown = 2f;
+    public float jumpCooldown = 10f;
 
     private Transform player;
     private Rigidbody2D rb;

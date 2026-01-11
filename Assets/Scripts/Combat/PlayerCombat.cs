@@ -36,7 +36,7 @@ public class PlayerCombat : MonoBehaviour
 
         if (sr != null)
         {
-            sr.color = isBlocking ? Color.cyan : Color.white;
+            sr.color = isBlocking ? Color.cyan : Color.blue;
         }
 
         // LIGHT ATTACK: J

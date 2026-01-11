@@ -2759,9 +2759,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   moveSpeed: 6
-  minDistance: 1.5
-  maxDistance: 3
-  desiredDistance: 2
+  minDistance: 1
+  maxDistance: 2
+  desiredDistance: 1
   groundCheck: {fileID: 477004296}
   groundCheckRadius: 0.1
   groundLayer:
@@ -2772,10 +2772,10 @@ MonoBehaviour:
   repathInterval: 0.3
   combat: {fileID: 1545766653}
   blockCloseDistance: 1.5
-  blockDuration: 0.6
-  blockCooldown: 1.5
+  blockDuration: 2
+  blockCooldown: 10
   jumpForce: 10
-  jumpCooldown: 2
+  jumpCooldown: 10
 --- !u!114 &1545766652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2806,7 +2806,7 @@ MonoBehaviour:
   playerLayers:
     serializedVersion: 2
     m_Bits: 128
-  attackRange: 1
+  attackRange: 1.3
   lightAttackDamage: 8
   heavyAttackDamage: 16
   lightAttackCooldown: 0.5
