@@ -15,18 +15,20 @@ public class EnemyCombat : MonoBehaviour
 
     [Header("Block Settings")]
     public bool isBlocking = false;
-    public float blockDamageMultiplier = 0.3f; // block varken alınan hasar oranı
+    public float blockDamageMultiplier = 0.3f;
 
     private float nextLightAttackTime = 0f;
     private float nextHeavyAttackTime = 0f;
 
     private SpriteRenderer sr;
+    private Animator animator;
     private Transform player;
     private FighterHealth health;
 
     private void Awake()
     {
         sr = GetComponentInChildren<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         health = GetComponent<FighterHealth>();
     }
 
@@ -42,7 +44,7 @@ public class EnemyCombat : MonoBehaviour
             Debug.LogError("EnemyCombat: Player not found!");
         }
 
-        UpdateBlockVisual(); // başlangıç rengi
+        UpdateBlockVisual();
     }
 
     // ---- BLOCK ----
@@ -50,15 +52,22 @@ public class EnemyCombat : MonoBehaviour
     public void SetBlocking(bool value)
     {
         isBlocking = value;
+        
+        // Animator'a block durumunu bildir
+        if (animator != null)
+        {
+            animator.SetBool("isBlocking", value);
+        }
+        
         UpdateBlockVisual();
     }
 
     private void UpdateBlockVisual()
     {
         if (sr == null) return;
-
-        // Block'tayken cyan, değilken kırmızı
-        sr.color = isBlocking ? Color.magenta : Color.red;
+        
+        // Block'tayken magenta, değilken beyaz (sprite rengi bozulmasın)
+        sr.color = isBlocking ? Color.magenta : Color.white;
     }
 
     public void ReceiveDamage(int amount)
@@ -105,6 +114,19 @@ public class EnemyCombat : MonoBehaviour
 
     private void PerformAttack(int damage, float flashTime, string attackName)
     {
+        // Trigger correct attack animation
+        if (animator != null)
+        {
+            if (attackName.Contains("Light"))
+            {
+                animator.SetTrigger("lightAttackTrigger");
+            }
+            else if (attackName.Contains("Heavy"))
+            {
+                animator.SetTrigger("heavyAttackTrigger");
+            }
+        }
+
         if (sr != null)
         {
             StopAllCoroutines();
@@ -153,8 +175,9 @@ public class EnemyCombat : MonoBehaviour
             yield break;
 
         Color original = sr.color;
-        sr.color = Color.magenta;
+        sr.color = Color.yellow;
         yield return new WaitForSeconds(time);
+        
         // Block durumuna göre rengi geri çek
         UpdateBlockVisual();
     }

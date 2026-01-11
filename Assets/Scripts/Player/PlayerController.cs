@@ -12,30 +12,21 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
 
     private Rigidbody2D rb;
+    private Animator animator;
     private float inputX;
     private bool isGrounded;
 
     private Transform enemy;
     private Vector3 initialScale;
 
-
-        // PlayerController.cs'e ekle:
-
-    private Animator animator;
-
     private void Awake()
     {
+        rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        initialScale = transform.localScale;
     }
 
-
-   /* private void Awake()
-    {
-        rb = GetComponent<Rigidbody2D>();
-        initialScale = transform.localScale;
-    } */
-
-     private void Start()
+    private void Start()
     {
         // Sahnedeki Enemy'yi tag'den bul
         GameObject enemyObj = GameObject.FindGameObjectWithTag("Enemy");
@@ -47,10 +38,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        animator.SetBool("isWalking", Mathf.Abs(inputX) > 0.1f);
-        animator.SetBool("isJumping", !isGrounded);
         inputX = Input.GetAxisRaw("Horizontal");
-
 
         // Yerde miyiz?
         if (groundCheck != null)
@@ -65,21 +53,23 @@ public class PlayerController : MonoBehaviour
         // Zıplama
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            if (rb != null)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            }
         }
 
-          if (enemy != null)
+        // Enemy'e bak
+        if (enemy != null)
         {
             float dx = enemy.position.x - transform.position.x;
 
-            // Çok yakınken deli gibi flip atmasın diye küçük bir eşik
             if (Mathf.Abs(dx) > 0.05f)
             {
                 float dirToEnemy = Mathf.Sign(dx);
 
                 if (dirToEnemy > 0)
                 {
-                    // Enemy sağda → sağa bak
                     transform.localScale = new Vector3(
                         Mathf.Abs(initialScale.x),
                         initialScale.y,
@@ -88,7 +78,6 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    // Enemy solda → sola bak
                     transform.localScale = new Vector3(
                         -Mathf.Abs(initialScale.x),
                         initialScale.y,
@@ -97,17 +86,25 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
+        // ANIMATION CONTROL
+        if (animator != null)
+        {
+            animator.SetBool("isWalking", Mathf.Abs(inputX) > 0.1f);
+            animator.SetBool("isJumping", !isGrounded);
+        }
     }
 
     private void FixedUpdate()
     {
-        // Yürüyüş
-        rb.linearVelocity = new Vector2(inputX * moveSpeed, rb.linearVelocity.y);
+        if (rb != null)
+        {
+            rb.linearVelocity = new Vector2(inputX * moveSpeed, rb.linearVelocity.y);
+        }
     }
 
     private void OnDrawGizmosSelected()
     {
-        // GroundCheck gizmo (editor'da küçük bir daire görebilirsin)
         if (groundCheck != null)
         {
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);

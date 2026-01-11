@@ -31,8 +31,8 @@ public class EnemyAIController : MonoBehaviour
     public bool useQLearning = true;
 
     [Header("Perceptron")]
-    public bool usePerceptron = true;           // Perceptron'u aç/kapa
-    public float perceptronRewardWeight = 0.5f; // Perceptron skorunun reward'daki ağırlığı
+    public bool usePerceptron = true;
+    public float perceptronRewardWeight = 0.5f;
 
     // Reward constants
     private const float REWARD_HIT_SUCCESS = 10f;
@@ -44,6 +44,7 @@ public class EnemyAIController : MonoBehaviour
 
     private Transform player;
     private Rigidbody2D rb;
+    private Animator animator;
     private float moveDir;
     private Vector3 initialScale;
     private QLearningAgent qAgent;
@@ -55,7 +56,7 @@ public class EnemyAIController : MonoBehaviour
     private float nextActionTime = 0f;
     private QLearningAgent.Action lastAction;
     private int lastPlayerAction = 0;
-    private float lastActionSuccess = 0f; // -1: fail, 0: neutral, 1: success
+    private float lastActionSuccess = 0f;
 
     // Health tracking
     private int lastEnemyHealth;
@@ -68,6 +69,7 @@ public class EnemyAIController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         qAgent = GetComponent<QLearningAgent>();
         perceptron = GetComponent<SimplePerceptron>();
         initialScale = transform.localScale;
@@ -129,6 +131,20 @@ public class EnemyAIController : MonoBehaviour
 
         UpdateMovement();
         CheckHealthChanges();
+        
+        // ANIMATION CONTROL
+        UpdateAnimations();
+    }
+
+    private void UpdateAnimations()
+    {
+        if (animator == null) return;
+
+        // Yürüyor mu?
+        animator.SetBool("isWalking", Mathf.Abs(moveDir) > 0.1f);
+        
+        // Zıplıyor mu? (havada mı?)
+        animator.SetBool("isJumping", !isGrounded);
     }
 
     private void ExecuteHybridStep(float distanceX)
@@ -149,7 +165,7 @@ public class EnemyAIController : MonoBehaviour
         // 3. Action'ı uygula
         ExecuteAction(action, distanceX);
 
-        // 4. Immediate reward ver (ideal mesafe + perceptron evaluation)
+        // 4. Immediate reward ver
         float immediateReward = 0f;
 
         // Ideal mesafe reward'ı
@@ -161,7 +177,6 @@ public class EnemyAIController : MonoBehaviour
         // Perceptron evaluation reward'ı
         if (usePerceptron)
         {
-            // State evaluation pozitifse (iyi durum) → reward ver
             immediateReward += currentStateEvaluation * perceptronRewardWeight;
         }
 
@@ -288,7 +303,7 @@ public class EnemyAIController : MonoBehaviour
     {
         float distanceX = Vector3.Distance(transform.position, player.position);
 
-        // Enemy health değişti mi? (hasar aldı)
+        // Enemy health değişti mi?
         FighterHealth enemyHealth = combat.GetComponent<FighterHealth>();
         if (enemyHealth != null && enemyHealth.currentHealth < lastEnemyHealth)
         {
@@ -297,7 +312,7 @@ public class EnemyAIController : MonoBehaviour
             
             qAgent.GiveReward(reward, GetCurrentState(distanceX));
             
-            // Perceptron'a öğret: Bu durum kötüydü
+            // Perceptron'a öğret
             if (usePerceptron)
             {
                 float[] inputs = GetPerceptronInputs(distanceX);
@@ -305,11 +320,11 @@ public class EnemyAIController : MonoBehaviour
                 perceptron.Train(inputs, target);
             }
 
-            lastActionSuccess = -1f; // Başarısız (hasar aldık)
+            lastActionSuccess = -1f;
             lastEnemyHealth = enemyHealth.currentHealth;
         }
 
-        // Player health değişti mi? (başarılı saldırı)
+        // Player health değişti mi?
         FighterHealth playerHealth = player.GetComponent<FighterHealth>();
         if (playerHealth != null && playerHealth.currentHealth < lastPlayerHealth)
         {
@@ -318,7 +333,7 @@ public class EnemyAIController : MonoBehaviour
             
             qAgent.GiveReward(reward, GetCurrentState(distanceX));
             
-            // Perceptron'a öğret: Bu durum iyiydi
+            // Perceptron'a öğret
             if (usePerceptron)
             {
                 float[] inputs = GetPerceptronInputs(distanceX);
@@ -326,7 +341,7 @@ public class EnemyAIController : MonoBehaviour
                 perceptron.Train(inputs, target);
             }
 
-            lastActionSuccess = 1f; // Başarılı
+            lastActionSuccess = 1f;
             lastPlayerHealth = playerHealth.currentHealth;
         }
     }
@@ -456,7 +471,10 @@ public class EnemyAIController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.linearVelocity = new Vector2(moveDir * moveSpeed, rb.linearVelocity.y);
+        if (rb != null)
+        {
+            rb.linearVelocity = new Vector2(moveDir * moveSpeed, rb.linearVelocity.y);
+        }
     }
 
     private void FacePlayer(float direction)

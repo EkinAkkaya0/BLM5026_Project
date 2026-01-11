@@ -21,11 +21,13 @@ public class PlayerCombat : MonoBehaviour
     private float nextHeavyAttackTime = 0f;
 
     private SpriteRenderer sr;
+    private Animator animator;
     private FighterHealth health;
 
     private void Awake()
     {
         sr = GetComponentInChildren<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         health = GetComponent<FighterHealth>();
     }
 
@@ -34,9 +36,15 @@ public class PlayerCombat : MonoBehaviour
         // BLOCK
         isBlocking = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
+        // Block animation
+        if (animator != null)
+        {
+            animator.SetBool("isBlocking", isBlocking);
+        }
+
         if (sr != null)
         {
-            sr.color = isBlocking ? Color.cyan : Color.blue;
+            sr.color = isBlocking ? Color.cyan : Color.white;
         }
 
         // LIGHT ATTACK: J
@@ -55,55 +63,67 @@ public class PlayerCombat : MonoBehaviour
     }
 
     private void PerformAttack(int damage, float flashTime, string attackName)
-{
-    if (sr != null)
     {
-        StopAllCoroutines();
-        StartCoroutine(AttackFlash(flashTime));
-    }
-
-    if (attackPoint == null) return;
-
-    Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
-        attackPoint.position,
-        attackRange,
-        enemyLayers
-    );
-
-    int hitCount = 0;
-
-    foreach (Collider2D enemy in hitEnemies)
-    {
-        // ÖNCE EnemyCombat'e sor (block var mı vs.)
-        EnemyCombat enemyCombat = enemy.GetComponent<EnemyCombat>();
-        FighterHealth enemyHealth = enemy.GetComponent<FighterHealth>();
-
-        if (enemyCombat != null)
+        // Trigger correct attack animation based on attack type
+        if (animator != null)
         {
-            enemyCombat.ReceiveDamage(damage);
-            hitCount++;
+            if (attackName.Contains("Light"))
+            {
+                animator.SetTrigger("lightAttackTrigger");
+            }
+            else if (attackName.Contains("Heavy"))
+            {
+                animator.SetTrigger("heavyAttackTrigger");
+            }
         }
-        else if (enemyHealth != null)
+
+        if (sr != null)
         {
-            // Yedek: block sistemi yoksa direkt can düşsün
-            enemyHealth.TakeDamage(damage);
-            hitCount++;
+            StopAllCoroutines();
+            StartCoroutine(AttackFlash(flashTime));
+        }
+
+        if (attackPoint == null) return;
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
+            attackPoint.position,
+            attackRange,
+            enemyLayers
+        );
+
+        int hitCount = 0;
+
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            EnemyCombat enemyCombat = enemy.GetComponent<EnemyCombat>();
+            FighterHealth enemyHealth = enemy.GetComponent<FighterHealth>();
+
+            if (enemyCombat != null)
+            {
+                enemyCombat.ReceiveDamage(damage);
+                hitCount++;
+            }
+            else if (enemyHealth != null)
+            {
+                enemyHealth.TakeDamage(damage);
+                hitCount++;
+            }
+        }
+
+        if (hitCount > 0)
+        {
+            FighterUI.PlayerUI?.SetLastAction($"{attackName}: {damage} dmg (hit x{hitCount})");
+        }
+        else
+        {
+            FighterUI.PlayerUI?.SetLastAction($"{attackName}: missed");
         }
     }
-
-    if (hitCount > 0)
-    {
-        FighterUI.PlayerUI?.SetLastAction($"{attackName}: {damage} dmg (hit x{hitCount})");
-    }
-    else
-    {
-        FighterUI.PlayerUI?.SetLastAction($"{attackName}: missed");
-    }
-}
-
 
     private System.Collections.IEnumerator AttackFlash(float time)
     {
+        if (sr == null) yield break;
+        
         Color original = sr.color;
         sr.color = Color.yellow;
         yield return new WaitForSeconds(time);

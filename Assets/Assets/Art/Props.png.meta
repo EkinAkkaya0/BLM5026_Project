@@ -1,25 +1,25 @@
 fileFormatVersion: 2
-guid: 8154355a723c22f4fb8863524d14e1f5
+guid: e5cf29b3a3304014ba13444d951e4ae8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6991849013916550155
-    second: Death_0
+      213: 7265313343042191254
+    second: Props_0
   - first:
-      213: -276728812324164698
-    second: Death_1
+      213: -4871644234308700824
+    second: Props_1
   - first:
-      213: 3156895337291164288
-    second: Death_2
+      213: 7466427622202046938
+    second: Props_2
   - first:
-      213: 1400002288684528572
-    second: Death_3
+      213: 4489838820935638777
+    second: Props_3
   - first:
-      213: -1891625820773287384
-    second: Death_4
+      213: -1870876656750283219
+    second: Props_4
   - first:
-      213: -5789737788129074030
-    second: Death_5
+      213: -4004860913340282569
+    second: Props_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -128,13 +128,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Death_0
+      name: Props_0
       rect:
         serializedVersion: 2
-        x: 63
-        y: 5
-        width: 33
-        height: 56
+        x: 23
+        y: 0
+        width: 66
+        height: 148
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -143,20 +143,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b0449ad32a9080160800000000000000
-      internalID: 6991849013916550155
+      spriteID: 69f7fe10ef393d460800000000000000
+      internalID: 7265313343042191254
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_1
+      name: Props_1
       rect:
         serializedVersion: 2
-        x: 221
-        y: 5
-        width: 30
-        height: 51
+        x: 113
+        y: 127
+        width: 14
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -165,20 +165,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6ab6d428c9cd82cf0800000000000000
-      internalID: -276728812324164698
+      spriteID: 86533f54161746cb0800000000000000
+      internalID: -4871644234308700824
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_2
+      name: Props_2
       rect:
         serializedVersion: 2
-        x: 377
-        y: 5
-        width: 34
-        height: 42
+        x: 143
+        y: 127
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -187,20 +187,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 08aa354559b8fcb20800000000000000
-      internalID: 3156895337291164288
+      spriteID: ad974821d541e9760800000000000000
+      internalID: 7466427622202046938
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_3
+      name: Props_3
       rect:
         serializedVersion: 2
-        x: 534
-        y: 5
-        width: 37
-        height: 33
+        x: 177
+        y: 127
+        width: 14
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -209,20 +209,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cb376cdf9aecd6310800000000000000
-      internalID: 1400002288684528572
+      spriteID: 9fe90a49e9c1f4e30800000000000000
+      internalID: 4489838820935638777
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_4
+      name: Props_4
       rect:
         serializedVersion: 2
-        x: 680
-        y: 5
-        width: 51
-        height: 14
+        x: 207
+        y: 127
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -231,20 +231,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 82af9d896589fb5e0800000000000000
-      internalID: -1891625820773287384
+      spriteID: d2634dfc79f4906e0800000000000000
+      internalID: -1870876656750283219
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Death_5
+      name: Props_5
       rect:
         serializedVersion: 2
-        x: 840
-        y: 5
-        width: 51
-        height: 12
+        x: 124
+        y: 0
+        width: 118
+        height: 100
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -253,8 +253,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 29429e33828b6afa0800000000000000
-      internalID: -5789737788129074030
+      spriteID: 739818dc730eb68c0800000000000000
+      internalID: -4004860913340282569
       vertices: []
       indices: 
       edges: []
@@ -273,12 +273,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Death_0: 6991849013916550155
-      Death_1: -276728812324164698
-      Death_2: 3156895337291164288
-      Death_3: 1400002288684528572
-      Death_4: -1891625820773287384
-      Death_5: -5789737788129074030
+      Props_0: 7265313343042191254
+      Props_1: -4871644234308700824
+      Props_2: 7466427622202046938
+      Props_3: 4489838820935638777
+      Props_4: -1870876656750283219
+      Props_5: -4004860913340282569
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
