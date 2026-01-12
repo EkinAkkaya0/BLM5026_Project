@@ -20,6 +20,7 @@ public class EnemyCombat : MonoBehaviour
     private float nextLightAttackTime = 0f;
     private float nextHeavyAttackTime = 0f;
 
+    private AttackSFX attackSfx;
     private SpriteRenderer sr;
     private Animator animator;
     private Transform player;
@@ -27,6 +28,7 @@ public class EnemyCombat : MonoBehaviour
 
     private void Awake()
     {
+        attackSfx = GetComponent<AttackSFX>();
         sr = GetComponentInChildren<SpriteRenderer>();
         animator = GetComponent<Animator>();
         health = GetComponent<FighterHealth>();
@@ -114,6 +116,7 @@ public class EnemyCombat : MonoBehaviour
 
     private void PerformAttack(int damage, float flashTime, string attackName)
     {
+        attackSfx?.PlayAttack();
         // Trigger correct attack animation
         if (animator != null)
         {

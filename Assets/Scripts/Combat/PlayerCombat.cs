@@ -20,12 +20,14 @@ public class PlayerCombat : MonoBehaviour
     private float nextLightAttackTime = 0f;
     private float nextHeavyAttackTime = 0f;
 
+    private AttackSFX attackSfx;
     private SpriteRenderer sr;
     private Animator animator;
     private FighterHealth health;
 
     private void Awake()
     {
+        attackSfx = GetComponent<AttackSFX>();
         sr = GetComponentInChildren<SpriteRenderer>();
         animator = GetComponent<Animator>();
         health = GetComponent<FighterHealth>();
@@ -64,6 +66,7 @@ public class PlayerCombat : MonoBehaviour
 
     private void PerformAttack(int damage, float flashTime, string attackName)
     {
+        attackSfx?.PlayAttack();
         // Trigger correct attack animation based on attack type
         if (animator != null)
         {

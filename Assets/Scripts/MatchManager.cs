@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class MatchManager : MonoBehaviour
 {
@@ -16,6 +17,10 @@ public class MatchManager : MonoBehaviour
     public Vector3 playerStartPosition = new Vector3(-3f, 0.5f, 0f);
     public Vector3 enemyStartPosition = new Vector3(3f, 0.5f, 0f);
 
+    [Header("End/Restart Timing")]
+    public float endDelayForDeathAnim = 1.0f; // death animasyonunu oynatmak için bekleme
+    public float restartDelayAfterEnd = 1.0f; // EndMatch log/stat sonrası yeni maç gecikmesi
+
     [Header("Match Stats")]
     public int currentEpisode = 0;
     public int playerWins = 0;
@@ -29,6 +34,9 @@ public class MatchManager : MonoBehaviour
     private float matchTimer;
     private bool matchInProgress = false;
 
+    private bool endRequested = false;
+    private Coroutine endRoutine;
+
     public enum MatchResult
     {
         PlayerWin,
@@ -38,70 +46,81 @@ public class MatchManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton pattern
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance == null) Instance = this;
+        else { Destroy(gameObject); return; }
     }
 
     private void Start()
     {
-        // İlk maçı başlat
         StartMatch();
     }
 
     private void Update()
     {
         if (!matchInProgress) return;
+        if (endRequested) return;
 
         // Timer kontrolü
         matchTimer -= Time.deltaTime;
         if (matchTimer <= 0f)
         {
-            EndMatch(MatchResult.Draw);
+            RequestEndMatch(MatchResult.Draw, 0f);
+            return;
         }
 
-        // Can kontrolü
+        // Can kontrolü (maçı burada hemen bitirmiyoruz, death animasyonuna süre veriyoruz)
         if (playerHealth != null && playerHealth.currentHealth <= 0)
         {
-            EndMatch(MatchResult.EnemyWin);
+            RequestEndMatch(MatchResult.EnemyWin, endDelayForDeathAnim);
         }
         else if (enemyHealth != null && enemyHealth.currentHealth <= 0)
         {
-            EndMatch(MatchResult.PlayerWin);
+            RequestEndMatch(MatchResult.PlayerWin, endDelayForDeathAnim);
         }
     }
 
     public void StartMatch()
     {
+        // önceki invoke/coroutine temizle
+        CancelInvoke(nameof(StartMatch));
+        if (endRoutine != null) StopCoroutine(endRoutine);
+        endRoutine = null;
+
+        endRequested = false;
+
         currentEpisode++;
         matchInProgress = true;
         matchTimer = matchDuration;
 
-        // Pozisyonları resetle
         ResetPositions();
-
-        // Canları doldur
         ResetHealth();
 
-        // Event fırlat
         OnMatchStart?.Invoke();
-
         Debug.Log($"=== EPISODE {currentEpisode} BAŞLADI ===");
     }
 
-    private void EndMatch(MatchResult result)
+    private void RequestEndMatch(MatchResult result, float delay)
     {
-        if (!matchInProgress) return; // Zaten bittiyse tekrar çağırma
+        if (endRequested) return;
+        endRequested = true;
 
+        // AI vs dursun diye match'i “in progress” olmaktan çıkar
         matchInProgress = false;
 
+        if (endRoutine != null) StopCoroutine(endRoutine);
+        endRoutine = StartCoroutine(EndMatchAfterDelay(result, delay));
+    }
+
+    private IEnumerator EndMatchAfterDelay(MatchResult result, float delay)
+    {
+        if (delay > 0f)
+            yield return new WaitForSeconds(delay);
+
+        EndMatchNow(result);
+    }
+
+    private void EndMatchNow(MatchResult result)
+    {
         // İstatistikleri güncelle
         switch (result)
         {
@@ -119,14 +138,11 @@ public class MatchManager : MonoBehaviour
                 break;
         }
 
-        // Event fırlat
         OnMatchEnd?.Invoke(result);
-
-        // İstatistikleri logla
         LogMatchStats();
 
-        // 2 saniye sonra yeni maç başlat
-        Invoke(nameof(StartMatch), 2f);
+        // restart
+        Invoke(nameof(StartMatch), restartDelayAfterEnd);
     }
 
     private void ResetPositions()
@@ -134,7 +150,6 @@ public class MatchManager : MonoBehaviour
         if (playerTransform != null)
         {
             playerTransform.position = playerStartPosition;
-            // Velocity'yi sıfırla
             Rigidbody2D playerRb = playerTransform.GetComponent<Rigidbody2D>();
             if (playerRb != null)
             {
@@ -146,7 +161,6 @@ public class MatchManager : MonoBehaviour
         if (enemyTransform != null)
         {
             enemyTransform.position = enemyStartPosition;
-            // Velocity'yi sıfırla
             Rigidbody2D enemyRb = enemyTransform.GetComponent<Rigidbody2D>();
             if (enemyRb != null)
             {
@@ -158,15 +172,8 @@ public class MatchManager : MonoBehaviour
 
     private void ResetHealth()
     {
-        if (playerHealth != null)
-        {
-            playerHealth.ResetHealth();
-        }
-
-        if (enemyHealth != null)
-        {
-            enemyHealth.ResetHealth();
-        }
+        if (playerHealth != null) playerHealth.ResetHealth();
+        if (enemyHealth != null) enemyHealth.ResetHealth();
     }
 
     private void LogMatchStats()
@@ -184,13 +191,12 @@ public class MatchManager : MonoBehaviour
         return (wins / (float)currentEpisode) * 100f;
     }
 
-    // Manuel maç bitiş (debugging için)
+    // Debug için
     public void ForceEndMatch(MatchResult result)
     {
-        EndMatch(result);
+        RequestEndMatch(result, 0f);
     }
 
-    // Getter'lar
     public bool IsMatchInProgress()
     {
         return matchInProgress;
